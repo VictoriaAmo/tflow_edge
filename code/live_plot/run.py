@@ -1,39 +1,47 @@
-import asyncio
 import logging
 loglevel = logging.INFO
 logging.basicConfig(level=loglevel)
 import numpy as np
-
+import time
 from Traumschreiber import *
 from twisted.internet import reactor, defer, task
-
 from utils import reref_channels
+#ROS tools
+import sys
+sys.path.insert(0, "/home/felix/catkin_ws/src")
+import rospy
+from ldtool.msg import Eog
 
-SHOWPLOT = True
-
+SHOWPLOT = False
 ########################################
 # ID of the traumschreiber you are using
-ID = 4
+ID = 1
 ########################################
-
-GAIN = 16
+GAIN = 4
 TRAUMSCHREIBER_ADDR = "74:72:61:75:6D:{:02x}".format(ID)
-
 # reference channel
 REF_CHANNEL = 5
-
-duration=2500
-cnt = 0
+duration=25000
 data = np.zeros((duration,9), dtype='<i2')
+ # Publishers
+rospy.init_node("traumschreiber_data", anonymous=False)
+EOG_pub = rospy.Publisher("/EOG_data", Eog, queue_size=1)
+msg = Eog()
 
 def data_callback(data_in):
     global data
-    global cnt
-
+    
     data = np.roll(data, -1, axis=0)
     data[-1,:] = np.hstack(([[0]],data_in))
-    # data[-1,:] = reref_channels(data_in, REF_CHANNEL)
-    cnt += 1
+    data[-1,:] = reref_channels(data_in, REF_CHANNEL)
+    #new_row = [time.time(),data[-1,:][0],data[-1,:][1],data[-1,:][2]]
+    
+    msg.timestamp = time.time()
+    msg.ch0 = data[-1,:][0]
+    msg.ch1 = data[-1,:][1]
+    msg.ch2 = data[-1,:][2]
+    print(msg)
+    EOG_pub.publish(msg)
 
 if SHOWPLOT:
     import matplotlib

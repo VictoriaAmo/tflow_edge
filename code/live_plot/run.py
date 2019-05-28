@@ -13,6 +13,7 @@ import rospy
 from ldtool.msg import Eog
 
 SHOWPLOT = False
+
 ########################################
 # ID of the traumschreiber you are using
 ID = 1
@@ -76,7 +77,7 @@ async def run():
         # await t.set(a_on=1,color=(125,125,0))
         # await async_sleep(1)
         # await t.set(a_on=0,b_on=0,color=(0,0,0))
-        await async_sleep(5*50)
+        await async_sleep(2*3600)
         if SHOWPLOT:
             plot()
 

@@ -12,7 +12,7 @@ sys.path.insert(0, "/home/felix/catkin_ws/src")
 import rospy
 from ldtool.msg import Eog
 
-SHOWPLOT = False
+SHOWPLOT = True
 
 ########################################
 # ID of the traumschreiber you are using
@@ -21,7 +21,7 @@ ID = 1
 GAIN = 4
 TRAUMSCHREIBER_ADDR = "74:72:61:75:6D:{:02x}".format(ID)
 # reference channel
-REF_CHANNEL = 5
+REF_CHANNEL = 4
 duration=25000
 data = np.zeros((duration,9), dtype='<i2')
  # Publishers
